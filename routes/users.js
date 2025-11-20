@@ -82,17 +82,44 @@ router.post("/loggedin", function (req, res, next){
         
         //Compare the password supplied with the password in the database
         bcrypt.compare(password, hashedPassword, function(err, result){
-            if(err) {
+            if(err){
+                logLoginAttempt(username, false, req); // ADD THIS
                 next(err);
             }else if(result == true){
+                logLoginAttempt(username, true, req); // ADD THIS
                 res.send("Login successful! Welcome back " + user.first_name + " " + user.last_name);
             }else{
+                logLoginAttempt(username, false, req); // ADD THIS
                 res.send("Login failed: Incorrect password");
             }
         });
     });
 });
+function logLoginAttempt(username, success, req){
+    const ipAddress = req.ip || req.connection.remoteAddress;
+    const userAgent = req.get("User-Agent") || "Unknown";
+    
+    let sqlquery = "INSERT INTO audit_log (username, success, ip_address, user_agent) VALUES (?, ?, ?, ?)";
+    let newrecord = [username, success, ipAddress, userAgent];
+    
+    db.query(sqlquery, newrecord, (err, result) => {
+        if(err){
+            console.error('Failed to log login attempt:', err);
+        }
+    });
+};
 
+router.get("/audit", function(req, res, next){
+    let sqlquery = "SELECT username, attempt_time, success, ip_address, user_agent FROM audit_log ORDER BY attempt_time DESC";
+    
+    db.query(sqlquery, (err, result) =>{
+        if(err){
+            next(err);
+        }else{
+            res.render("audit.ejs", {auditLogs: result});
+        }
+    });
+});
 
 // Export the router object so index.js can access it
 module.exports = router
