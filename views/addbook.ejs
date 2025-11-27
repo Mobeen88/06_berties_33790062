@@ -6,15 +6,23 @@
   </head>
   <body>
     <h1><%=shopData.shopName%>: Add Book</h1>
-     <form action="/books/bookadded" method="POST">
+    
+    <% if(errors && errors.length > 0){ %>
+        <ul>
+            <% errors.forEach(function(error){ %>
+                <li style="color:red"><%= error.msg %></li>
+            <% }) %>
+        </ul>
+    <% } %>
+
+    <form action="/books/bookadded" method="POST">
       <label for="name"> Book Name: </label>
-      <input type="text" id="name" name="name" required>
+      <input type="text" id="name" name="name" value="<%= old ? old.name : '' %>" />
       <br><br>
-      <label for="name"> Price (£) </label>
-      <input type="number" id="price" name="price" step="0.01" required>
+      <label for="price"> Price (£) </label>
+      <input type="number" id="price" name="price" step="0.01" value="<%= old ? old.price : '' %>" />
       <br><br>
       <input type="submit" value="Add Book" >
     </form>
-    
   </body>
 </html>

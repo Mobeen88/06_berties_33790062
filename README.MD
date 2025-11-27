@@ -14,7 +14,7 @@ node index.js
 ## Features
 - Built with **Node.js**, **Express**, **EJS**, **MySQL** and **CSS**.
 - Multiple Routes:
-    - `` - Home Page
+    - `/` - Home Page
     - `/about` - About Page
     - `/books/search`- Search Page
     - `/users/register` - Register Page
@@ -23,6 +23,7 @@ node index.js
     - `/books/bargainbooks` - Bargain Books Page
     - `/users/list` - List of Users Who Registered Page
     - `/users/login` - Login Page
+    - `users/audit` - Audit Log Page
 
 ## dotenv Implementation
 To secure database credentials by implementing the dotenv module:
@@ -67,3 +68,49 @@ I have implemented a comprehensive audit logging system to track all login attem
 - Access the audit log at: `http://localhost:8000/users/audit`
 - All login attempts are automatically recorded in real-time
 - The audit log helps with security monitoring and troubleshooting authentication issues
+
+## Data Validation
+I implemented server-side validation using the `express-validator` module to ensure data integrity before processing it.
+
+### Where Validation IS Applied:
+
+**User Registration (`/users/registered`):**
+- **Email:** validated using `.isEmail()` to ensure the user provides a functioning contact method.
+- **Username:** validated using `.isLength({ min: 5, max: 20 })` to enforce consistency and database constraints.
+- **Password:** validated using `.isLength({ min: 8 })` to enforce a minimum security standard (e.g., passwords like `aaaaAAAA1234!` are accepted).
+- **First and Last Names:** validated using `.notEmpty()` to ensure incomplete profiles are not created.
+
+**Add Book Form (`/books/bookadded`):**
+- **Book Name:** validated with `.notEmpty()` to prevent empty book entries.
+- **Price:** validated with `.isFloat({ min: 0 })` to ensure the price is a positive number.
+
+### Where Validation is NOT Applied (Reasoning):
+
+- **Login Route:** I did not apply strict length/format validation to login fields. The authentication process itself (checking the database) acts as the validation. Invalid input will simply fail to find a match, which is the desired behavior.
+- **Search Route:** No restrictions on search term length; users may validly search for short words or partial matches.
+
+---
+
+## Security: Input Sanitization (XSS Prevention)
+To prevent Cross-Site Scripting (XSS) attacks, I implemented the `express-sanitizer` middleware. This strips dangerous HTML tags (like `<script>`) from user inputs before they are processed or stored in the database.
+
+### Where Sanitization IS Applied:
+
+- **Registration Form:** `username`, `first_name`, `last_name`, and `email` are sanitized. This ensures that if a malicious user registers with a name containing a script, it will not execute when other users view the "User List" page.
+- **Add Book Form:** The book name is sanitized to prevent malicious scripts from being injected into the book inventory list.
+- **Search Form:** The search keyword is sanitized to prevent XSS attacks on the search results page (where the keyword is echoed back to the user).
+- **Login Form:** The username is sanitized as a general precaution.
+
+### Where Sanitization is NOT Applied:
+
+- **Passwords:** I did not sanitize passwords. Sanitizing passwords would alter special characters (e.g., changing `<` to `&lt;`) and break hash verification, preventing legitimate users from logging in. Passwords are never displayed in HTML, so they do not pose an XSS risk.
+
+---
+
+## Test Users and Password Policy
+
+- Added test user `gold` with password `smiths` in `insert_test_data.sql` for marking and local testing.
+- Password validation allows strong passwords, e.g., `aaaaAAAA1234!`.
+- Ensures consistent credentials across environments.
+
+---
