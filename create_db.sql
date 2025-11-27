@@ -32,6 +32,8 @@ CREATE TABLE IF NOT EXISTS audit_log (
     attempt_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+/*
 # Create the application user
 CREATE USER IF NOT EXISTS 'berties_books_app'@'localhost' IDENTIFIED BY 'qwertyuiop'; 
 GRANT ALL PRIVILEGES ON berties_books.* TO 'berties_books_app'@'localhost';
+*/
