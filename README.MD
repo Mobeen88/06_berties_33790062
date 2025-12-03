@@ -149,7 +149,4 @@ Query Parameters:
    - http://localhost:8000/api/books?search=world
 
 - Filter books between £5 and £10:
-   - http://localhost:8000/api/books?minprice=5&maxprice=10
-
-- Search and sort by price:
-   - http://localhost:8000/api/books?search=history&sort=price
+   - http://localhost:8000/api/books?min_price=5&max_price=10
