@@ -24,6 +24,8 @@ node index.js
     - `/users/list` - List of Users Who Registered Page
     - `/users/login` - Login Page
     - `users/audit` - Audit Log Page
+    - `weather` - Weather Page
+    - `/api/books` - API for Books Page
 
 ## dotenv Implementation
 To secure database credentials by implementing the dotenv module:
@@ -114,3 +116,40 @@ To prevent Cross-Site Scripting (XSS) attacks, I implemented the `express-saniti
 - Ensures consistent credentials across environments.
 
 ---
+
+## Weather
+Added a /weather route that shows current weather data.
+
+Users can enter a city name in a form, and the app fetches weather data from the OpenWeatherMap API.
+
+Displayed data includes:
+- Temperature
+- Humidity
+- Wind speed
+
+Error handling is implemented:
+ - If the city is invalid or API fails, the page shows "City not found. Try again."
+
+The API key is stored in .env and accessed via process.env.WEATHER_API_KEY to avoid exposing it in code.
+
+## API for Books
+Added /api/books route to allow other developers to get books data in JSON format.
+
+Query Parameters:
+ - **search**: Filter books whose names contain the search term.
+ - **minprice**: Filter books priced above this value.
+ - **maxprice**: Filter books priced below this value.
+ - **sort**: Sort results by name or price (ascending).
+
+**Examples:**
+- Get all books:
+   - http://localhost:8000/api/books
+
+- Search for books containing "world":
+   - http://localhost:8000/api/books?search=world
+
+- Filter books between £5 and £10:
+   - http://localhost:8000/api/books?minprice=5&maxprice=10
+
+- Search and sort by price:
+   - http://localhost:8000/api/books?search=history&sort=price

@@ -67,6 +67,10 @@ app.use('/books', booksRoutes)
 const weatherRoutes = require('./routes/weather')
 app.use('/weather', weatherRoutes)
 
+// Load the route handlers for /api
+const apiRoutes = require('./routes/api')
+app.use('/api', apiRoutes)
+
 /*
 // Define the database connection pool
 const db = mysql.createPool({
