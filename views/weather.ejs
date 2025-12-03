@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Weather <%= shopData.shopName %></title>
+    <link rel="stylesheet" type="text/css" href="/main.css" />
+  </head>
+  <body>
+    <h1><%= shopData.shopName %>: Weather</h1>
+
+    <form action="/weather/results" method="post">
+      <p>
+        <label for="city">City:</label>
+        <input id="city" name="city" type="text" value="<%= city ? city : '' %>" required />
+        <button type="submit">Submit</button>
+      </p>
+    </form>
+
+    <% if(error){ %>
+      <div class="weather-box" style="background:#ffe6e6; border-color:#ffb3b3;">
+        <strong>Error:</strong> <%= error %>
+      </div>
+    <% } %>
+
+    <% if(weather){ %>
+      <div class="weather-box">
+        <h2>Weather in <%= weather.name %></h2>
+        <p>•<strong>Temperature:</strong> <%= weather.main.temp %> °C</p>
+        <p>•<strong>Humidity:</strong> <%= weather.main.humidity %> %</p>
+        <p>•<strong>Wind Speed:</strong> <%= weather.wind && weather.wind.speed ? weather.wind.speed : 'N/A' %> m/s</p>
+        <p>•<strong>Condition:</strong> <%= weather.weather && weather.weather[0] ? weather.weather[0].description : 'N/A' %></p>
+      </div>
+    <% } %>
+
+  </body>
+</html>
